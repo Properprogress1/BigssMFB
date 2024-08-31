@@ -7,10 +7,7 @@ contract Staking {
     uint256 constant public DAYS_IN_YEAR = 365;
     uint256 constant public FIXED_RATE = 10;
 
-    mapping(address => uint256) public balances;
-
     
-
     struct Stake {
         address user;
         uint256 endTime;
@@ -18,9 +15,8 @@ contract Staking {
         bool isComplete;
     }
 
-    receive () external payable{}
+    receive () external payable {} 
 
-    // Stake[] stakes;
     mapping(address => Stake[]) userStakes;
 
    
@@ -47,23 +43,23 @@ contract Staking {
 
         function claimReward(address _address, uint256 _index) external payable {
             require(userStakes[_address][_index].expectedInterest > 0, "Select a valid stake");
-            Stake storage selectedStake = userStakes[_address][_index]; //This line retrieves the specific stake from the user's array of stakes using the provided index. The stake is stored in a local variable named selectedStake.
-            require(block.timestamp > selectedStake.endTime, "stake is still ongoing"); //This line checks if the current block timestamp is greater than the stake's end time 
+            Stake storage selectedStake = userStakes[_address][_index]; 
+            require(block.timestamp > selectedStake.endTime, "stake is still ongoing"); 
 
-            require(!selectedStake.isComplete, "Stake already completed"); //This line ensures that the stake has not already been completed. 
+            require(!selectedStake.isComplete, "Stake already completed"); 
 
             require(address(this).balance >= selectedStake.expectedInterest, "contract does not have enough funds");
-            selectedStake.isComplete = true; // This line checks whether the contract's balance is sufficient to pay out the expected interest for the stake. 
+            selectedStake.isComplete = true; 
 
             (bool success,) = msg.sender.call{value: selectedStake.expectedInterest}("");
-            require(success, "Reward transfer failed");  //This line marks the stake as completed by setting the isComplete flag to true.
+            require(success, "Reward transfer failed");  
         }
 
 
         function getAllUserStakes(address _address) external view returns (Stake[] memory) {
-            require(msg.sender != address(0), "Address zero detected"); //This line attempts to transfer the expected interest (in Ether) to the user who called the function (msg.sender)
+            require(msg.sender != address(0), "Address zero detected"); 
 
-            require(userStakes[_address].length > 0, "user not available"); // this line checks whether the transfer was successful. If the transfer failed, the transaction is reverted with the error message "Reward transfer failed"
+            require(userStakes[_address].length > 0, "user not available"); 
 
             return userStakes[_address];
         }

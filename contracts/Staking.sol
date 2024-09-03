@@ -59,7 +59,7 @@ contract Staking {
         function getAllUserStakes(address _address) external view returns (Stake[] memory) {
             require(msg.sender != address(0), "Address zero detected"); 
 
-            require(userStakes[_address].length > 0, "user not available"); 
+            require(userStakes[_address].length > 0, "user not staked"); 
 
             return userStakes[_address];
         }
